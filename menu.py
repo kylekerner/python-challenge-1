@@ -53,6 +53,7 @@ menu = {
 # 1. Set up order list. Order list will store a list of dictionaries for
 # menu item name, item price, and quantity ordered
 
+order_list = []
 
 # Launch the store and present a greeting to the customer
 print("Welcome to the variety food truck.")
@@ -79,14 +80,14 @@ while place_order:
         i += 1
 
     # Get the customer's input
-    menu_category = input("Type menu number: ")
+    menu_selection = input("Type menu number: ")
 
     # Check if the customer's input is a number
-    if menu_category.isdigit():
+    if menu_selection.isdigit():
         # Check if the customer's input is a valid option
-        if int(menu_category) in menu_items.keys():
+        if int(menu_selection) in menu_items.keys():
             # Save the menu category name to a variable
-            menu_category_name = menu_items[int(menu_category)]
+            menu_category_name = menu_items[int(menu_selection)]
             # Print out the menu category name they selected
             print(f"You selected {menu_category_name}")
 
@@ -118,35 +119,40 @@ while place_order:
                     }
                     i += 1
             # 2. Ask customer to input menu item number
+            menu_item_number = input("Type item number: ")
 
-
-            # 3. Check if the customer typed a number
-
-                # Convert the menu selection to an integer
-
-
+             # 3. Check if the customer typed a number
+            if menu_item_number.isdigit():
+               # Convert the menu selection to an integer
+                menu_item_int = int(menu_item_number)
                 # 4. Check if the menu selection is in the menu items
-
+                if menu_item_int in menu_items.keys():
                     # Store the item name as a variable
-
-
+                    menu_item_name = menu_items[int(menu_item_int)]
                     # Ask the customer for the quantity of the menu item
-
-
+                    item_quantity = input(f"How many {menu_item_name['Item name']}'s would you like to purchase? ")
                     # Check if the quantity is a number, default to 1 if not
-
-
+                    if item_quantity.isdigit():
+                        menu_item_name['Quantity'] = item_quantity
+                        order_list.append(menu_items[menu_item_int])
                     # Add the item name, price, and quantity to the order list
-
-
+                    else:
+                        item_quantity = 1
+                        menu_item_name['Quantity'] = item_quantity
+                        order_list.append(menu_items[menu_item_int])
                     # Tell the customer that their input isn't valid
-
+                    print(order_list)
+                else: 
+                    print("You didn't select a number.")
 
                 # Tell the customer they didn't select a menu option
+            else:
+                print("You didn't select a menu option.")
 
         else:
             # Tell the customer they didn't select a menu option
-            print(f"{menu_category} was not a menu option.")
+            print(f"{menu_selection} was not a menu option.")
+
     else:
         # Tell the customer they didn't select a number
         print("You didn't select a number.")
@@ -156,45 +162,59 @@ while place_order:
         keep_ordering = input("Would you like to keep ordering? (Y)es or (N)o ")
 
         # 5. Check the customer's input
-
+        match keep_ordering.lower():
+            case 'y':
                 # Keep ordering
-
+                place_order = True
                 # Exit the keep ordering question loop
+                break
 
+            # Customer chose no
+            case 'n':
                 # Complete the order
-
-                # Since the customer decided to stop ordering, thank them for
-                # their order
-
+                place_order = False
+                # Since the customer decided to stop ordering, thank them for their order
+                print("Thank you for your order.")
                 # Exit the keep ordering question loop
+                break
 
-
+            # Customer typed an invalid input
+            case _:
                 # Tell the customer to try again
-
+                print("I didn't understand your response.  Please try again.")
 
 # Print out the customer's order
 print("This is what we are preparing for you.\n")
 
 # Uncomment the following line to check the structure of the order
 #print(order)
-
 print("Item name                 | Price  | Quantity")
 print("--------------------------|--------|----------")
+total_price = 0
 
 # 6. Loop through the items in the customer's order
+for name in order_list:
 
     # 7. Store the dictionary items as variables
-
+    item_name = name['Item name']
+    item_price = name['Price']
+    quantity = name['Quantity']
 
     # 8. Calculate the number of spaces for formatted printing
-
-
     # 9. Create space strings
+    num_item_spaces = 26 - len(item_name)
+    item_spaces = " " * num_item_spaces
+    num_item_spaces_2 = 6 - len(str(item_price))
+    item_spaces_2 = " " * num_item_spaces_2
 
 
     # 10. Print the item name, price, and quantity
-
+    print(f"{item_name}{item_spaces}| ${item_price}{item_spaces_2}| {quantity}")
 
 # 11. Calculate the cost of the order using list comprehension
 # Multiply the price by quantity for each item in the order list, then sum()
 # and print the prices.
+total_price = sum(float(name['Price']) * int(name['Quantity']) for name in order_list)
+print("--------------------------|--------|----------")
+print(f"The total amount due is ${total_price:.2f}")
+print("Thank you for coming to variety food truck!")
